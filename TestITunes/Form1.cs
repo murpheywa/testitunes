@@ -29,6 +29,7 @@ namespace TestITunes
 		string _sPlayListTargetPath = "";
 		string _sTrackTargetPath = "";
 		string _sSrcPath = "";
+        // TBD
 
 		public Form1()
 		{
@@ -117,7 +118,8 @@ namespace TestITunes
 			string sPath = _app.LibraryXMLPath;
 
 			tbSrc.Clear();
-			var oSource = _app.LibrarySource;
+            _playListtDict.Clear();
+            var oSource = _app.LibrarySource;
             foreach (IITPlaylist pl in oSource.Playlists)
 			{
 				ITPlaylistKind eKind = pl.Kind;
@@ -132,10 +134,18 @@ namespace TestITunes
 					eSpecialKind = plUser.SpecialKind;
 					if ( bSmart == false && eSpecialKind == ITUserPlaylistSpecialKind.ITUserPlaylistSpecialKindNone)
 					{
-						UInt64 uIndex = (UInt64)(((long)plUser.sourceID) << 32 | (long)plUser.playlistID);
-						_playListtDict.Add(plUser.Name, uIndex);
-						// confirm
-						u2 = GetPlayList(plUser.Name);
+                        UInt64 uIndex;
+                        try
+                        {
+                            uIndex = (UInt64)(((long)plUser.sourceID) << 32 | (long)plUser.playlistID);
+                            _playListtDict.Add(plUser.Name, uIndex);
+                            // confirm
+                            u2 = GetPlayList(plUser.Name);
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                        }
 
                     }
 				}
@@ -165,8 +175,9 @@ namespace TestITunes
 				{
 					o = _app.GetITObjectByID(uiSource, uiPlaylist, 0, 0);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
+                    MessageBox.Show(ex.ToString());
 				}
 				pl = o as IITUserPlaylist;
 			}
